@@ -1,5 +1,23 @@
 <template>
   <div>
+    <form>
+      <div class="row">
+        <div class="mb-3 col-3">
+          <label for="userNumber" class="form-label text-white"
+            >Número de usuarios</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            id="userNumber"
+            aria-describedby="numberUser"
+            maxlength="10"
+            v-model="iNumberUsers"
+            @keyup="getUser()"
+          />
+        </div>
+      </div>
+    </form>
     <table class="table table-light table-striped table-hover">
       <thead>
         <tr>
@@ -11,7 +29,7 @@
         </tr>
       </thead>
       <tbody>
-          <!-- Recorriendo Array de forma dinamica -->
+        <!-- Recorriendo Array de forma dinamica -->
         <tr v-for="(user, index) in aUsers" :key="index">
           <td>{{ user.name["first"] }} {{ user.name["last"] }}</td>
           <td>{{ user.gender }}</td>
@@ -32,6 +50,7 @@ const initialData = () => ({
   /* Variables */
   /* Array para almacenar usuarios */
   aUsers: [],
+  iNumberUsers: 5,
   /* Array para almacenar usuarios */
 });
 export default {
@@ -42,22 +61,23 @@ export default {
   methods: {
     /* Obteniendo usuarios con axios */
     getUser() {
-      console.log("Cola");
-      axios
-        .get("https://randomuser.me/api/", {})
-        .then((response) => {
-          console.log(response.data.results[0]);
-          this.aUsers = response.data.results;
-
-          /* Esta ciclo lo utilice con el fin de simular los datos que me retorna la peticion ya que en este momento solo me retorna uno */
-          for (let index = 0; index < 5; index++) {
-            this.aUsers.push(response.data.results[0]);
-          }
-        })
-        .catch((error) => {
-          /* Capturando errores  */
-          console.error("no se pudo realizar la peticion", error);
-        });
+      console.log(this.iNumberUsers);
+      this.aUsers = [];
+      /* Esta ciclo lo utilice con el fin de simular los datos que me retorna la peticion ya que en este momento solo me retorna uno */
+      if (this.iNumberUsers < 10) {
+        for (let index = 0; index < this.iNumberUsers; index++) {
+          axios
+            .get("https://randomuser.me/api/", {})
+            .then((response) => {
+              console.log(response.data.results[0]);
+              this.aUsers.push(response.data.results[0]);
+            })
+            .catch((error) => {
+              /* Capturando errores  */
+              console.error("no se pudo realizar la peticion", error);
+            });
+        }
+      }
     },
   },
   mounted() {
